@@ -1,25 +1,47 @@
 import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useProductStore } from '../../../store/useProductStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Product } from '../../../types/product';
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AddToCartButton } from '@/src/components/Button/AddToCardButton';
 import { useFavoritesStore } from '../../../store/useFavoritesStore';
 import { FavoriteButton } from '@/src/components/Button/FavoritesButton';
+import { Colors } from '@/src/constants/Colors';
 
 export default function Home() {
   const { t } = useTranslation();
   const { products, isLoading, error, fetchProducts } = useProductStore();
   const { loadFavoritesFromStorage } = useFavoritesStore();
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     fetchProducts();
     loadFavoritesFromStorage();
   }, [fetchProducts]);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (products.length > 0) {
+      setDisplayedProducts(products.slice(0, currentPage * ITEMS_PER_PAGE));
+    }
+  }, [currentPage, products]);
+
+  const loadMoreProducts = () => {
+    if (displayedProducts.length < products.length && !isLoadingMore) {
+      setIsLoadingMore(true);
+
+      setTimeout(() => {
+        setCurrentPage(currentPage + 1);
+        setIsLoadingMore(false);
+      }, 500);
+    }
+  };
+
+  if (isLoading && displayedProducts.length === 0) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
@@ -66,6 +88,17 @@ export default function Home() {
     </View>
   );
 
+  const renderFooter = () => {
+    if (!isLoadingMore && displayedProducts.length >= products.length)
+      return null;
+
+    return (
+      <View style={styles.footer}>
+        <ActivityIndicator size="large" color={Colors.common.primary} />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
@@ -75,12 +108,15 @@ export default function Home() {
       <FlatList
         style={styles.list}
         showsVerticalScrollIndicator={false}
-        data={products}
+        data={displayedProducts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         numColumns={2}
         columnWrapperStyle={styles.row}
+        onEndReached={loadMoreProducts}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
   );
