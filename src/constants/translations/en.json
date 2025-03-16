@@ -1,0 +1,30 @@
+{
+  "common": {
+    "home": "Home",
+    "basket": "Cart",
+    "favorites": "Favorites",
+    "profile": "Profile"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "featured_products": "Featured Products",
+    "categories": "Categories",
+    "search_placeholder": "Search products..."
+  },
+  "basket": {
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "checkout": "Checkout",
+    "remove": "Remove"
+  },
+  "favorites": {
+    "empty": "No favorite products",
+    "add_to_basket": "Add to Cart"
+  },
+  "profile": {
+    "orders": "My Orders",
+    "addresses": "My Addresses",
+    "settings": "Settings",
+    "logout": "Logout"
+  }
+}
