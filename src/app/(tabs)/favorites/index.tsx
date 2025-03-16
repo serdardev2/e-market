@@ -14,6 +14,8 @@ import { IconSymbol } from '@/src/components/ui/IconSymbol';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/src/store/useCardStore';
 import styles from './styles';
+import { MainButton } from '@/src/components/Button/MainButton';
+import { Colors } from '@/src/constants/Colors';
 
 export default function Favorites() {
   const { favorites, error, loadFavoritesFromStorage, removeFromFavorites } =
@@ -97,7 +99,11 @@ export default function Favorites() {
           style={styles.removeButton}
           onPress={() => removeFromFavorites(item.id)}
         >
-          <IconSymbol size={20} name="star.slash.fill" color="#FF6B6B" />
+          <IconSymbol
+            size={20}
+            name="star.slash.fill"
+            color={Colors.common.red}
+          />
           <Text style={styles.removeButtonText}>{t('favorites.remove')}</Text>
         </TouchableOpacity>
       </View>

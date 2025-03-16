@@ -1,3 +1,4 @@
+import { Colors } from '@/src/constants/Colors';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
@@ -54,13 +55,13 @@ export default StyleSheet.create({
   },
   productBrand: {
     fontSize: 14,
-    color: '#666666',
+    color: Colors.common.grey,
     marginBottom: 6,
   },
   productPrice: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#007BFF',
+    color: Colors.common.primary,
   },
   actionButtons: {
     flexDirection: 'row',
@@ -73,7 +74,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#007BFF',
+    backgroundColor: Colors.common.primary,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,
@@ -81,7 +82,7 @@ export default StyleSheet.create({
     marginRight: 8,
   },
   inCartButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: Colors.common.green,
   },
   cartButtonText: {
     color: 'white',
@@ -100,7 +101,7 @@ export default StyleSheet.create({
     marginLeft: 8,
   },
   removeButtonText: {
-    color: '#FF6B6B',
+    color: Colors.common.red,
     fontWeight: '600',
     marginLeft: 6,
   },

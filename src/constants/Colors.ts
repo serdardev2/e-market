@@ -10,7 +10,7 @@ export const Colors = {
   common: {
     blue: '#0a7ea4',
     green: '#00a74a',
-    red: '#d32f2f',
+    red: '#FF6B6B',
     yellow: '#fbc02d',
     orange: '#f57c00',
     purple: '#7b1fa2',
