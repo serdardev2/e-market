@@ -20,7 +20,7 @@ export const Colors = {
     grey: '#9e9e9e',
     brown: '#5d4037',
     darkBlue: '#1D56FF',
-    priamry: '#1D56FF',
+    primary: '#1D56FF',
     white: '#fff',
   },
   light: {

@@ -14,11 +14,13 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'star.fill': 'star',
+  star: 'star-border',
   'person.fill': 'person',
   'cart.fill': 'shopping-cart',
   ellipsis: 'more-vert',
   'ellipsis.circle': 'more-vert',
   'ellipsis.circle.fill': 'more-vert',
+  trash: 'delete-outline',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

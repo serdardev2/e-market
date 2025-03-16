@@ -5,40 +5,26 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  StyleSheet,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFavoritesStore } from '../../../store/useFavoritesStore';
 import { Product } from '../../../types/product';
 import { IconSymbol } from '@/src/components/ui/IconSymbol';
-import { useCartStore } from '@/src/store/useCardStore';
-import { styles } from './styles';
 import { useTranslation } from 'react-i18next';
+import { useCartStore } from '@/src/store/useCardStore';
+import styles from './styles';
 
 export default function Favorites() {
-  const {
-    favorites,
-    isLoading,
-    error,
-    loadFavoritesFromStorage,
-    removeFromFavorites,
-  } = useFavoritesStore();
-  const { addToCart, cartItems } = useCartStore();
+  const { favorites, error, loadFavoritesFromStorage, removeFromFavorites } =
+    useFavoritesStore();
+  const { addToCart, cartItems, loadCartFromStorage } = useCartStore();
   const { t } = useTranslation();
 
   useEffect(() => {
     loadFavoritesFromStorage();
+    loadCartFromStorage();
   }, []);
-
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.loadingText}>
-          {t('favorites.loadingFavorites')}
-        </Text>
-      </SafeAreaView>
-    );
-  }
 
   if (error) {
     return (
@@ -49,12 +35,30 @@ export default function Favorites() {
   }
 
   const isInCart = (productId: string) => {
-    return cartItems.some((item) => item.id === productId);
+    if (!cartItems || cartItems.length === 0) return false;
+
+    const firstItem = cartItems[0];
+
+    if (firstItem.product) {
+      return cartItems.some((item) => item.product.id === productId);
+    } else if (firstItem.id) {
+      return cartItems.some((item) => item.id === productId);
+    }
+
+    return false;
   };
 
-  const handleAddToCart = (product: Product) => {
-    if (!isInCart(product.id)) {
-      addToCart(product);
+  const handleAddToCart = async (product: Product) => {
+    try {
+      if (!isInCart(product.id)) {
+        const result = await addToCart(product);
+
+        if (result && !result.success) {
+          Alert.alert('Bilgi', result.message);
+        }
+      }
+    } catch (error) {
+      Alert.alert('Hata', 'Ürün sepete eklenirken bir sorun oluştu');
     }
   };
 
@@ -120,6 +124,7 @@ export default function Favorites() {
         </View>
       ) : (
         <FlatList
+          style={styles.listContainer}
           data={favorites}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}

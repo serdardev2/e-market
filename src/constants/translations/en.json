@@ -3,7 +3,9 @@
     "home": "Home",
     "basket": "Cart",
     "favorites": "Favorites",
-    "profile": "Profile"
+    "profile": "Profile",
+    "error": "Error",
+    "info": "Info"
   },
   "home": {
     "welcome": "Welcome",
@@ -22,7 +24,20 @@
     "total": "Total",
     "remove": "Remove",
     "title": "My Cart",
-    "emptyCartMessage": "Your cart is empty"
+    "emptyCartMessage": "Your cart is empty",
+    "totalPrice": "Total Price",
+    "checkout": "Checkout"
+  },
+  "cart": {
+    "addedToCart": "Product added to cart",
+    "quantityIncreased": "Product quantity increased",
+    "errorAddingToCart": "An error occurred while adding to cart",
+    "errorRemovingFromCart": "An error occurred while removing from cart",
+    "errorIncreasingQuantity": "An error occurred while increasing quantity",
+    "errorDecreasingQuantity": "An error occurred while decreasing quantity",
+    "errorClearingCart": "An error occurred while clearing cart",
+    "errorParsingCartData": "Cart data could not be parsed",
+    "errorLoadingCart": "An error occurred while loading cart"
   },
   "favorites": {
     "empty": "No favorite products",
@@ -31,7 +46,12 @@
     "title": "My Favorites",
     "remove": "Remove from Favorites",
     "emptyFavoritesMessage": "No favorite products",
-    "emptyFavoritesDescription": "You can view and add your favorite products here."
+    "emptyFavoritesDescription": "You can view and add your favorite products here.",
+    "addedToFavorites": "Product added to favorites",
+    "removedFromFavorites": "Product removed from favorites",
+    "errorAddingToFavorites": "An error occurred while adding to favorites",
+    "errorRemovingFromFavorites": "An error occurred while removing from favorites",
+    "errorLoadingFavorites": "An error occurred while loading favorites"
   },
   "profile": {
     "orders": "My Orders",

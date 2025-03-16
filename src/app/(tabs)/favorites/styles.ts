@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
@@ -16,6 +16,9 @@ export const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
+  },
+  listContainer: {
+    marginBottom: 32,
   },
   favoriteItem: {
     backgroundColor: 'white',

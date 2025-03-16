@@ -2,7 +2,7 @@ import { Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from './styles';
+import styles from './styles';
 
 export default function Profile() {
   const { t } = useTranslation();

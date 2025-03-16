@@ -1,16 +1,27 @@
-// store/useCartStore.ts
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Product } from '../types/product';
+import i18next from 'i18next';
+
+interface CartItem {
+  id: string;
+  product: Product;
+  quantity: number;
+}
 
 interface CartState {
-  cartItems: Product[];
+  cartItems: CartItem[];
   isLoading: boolean;
   error: string | null;
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  clearCart: () => void;
+  addToCart: (
+    product: Product,
+  ) => Promise<{ success: boolean; message: string }>;
+  removeFromCart: (productId: string) => Promise<void>;
+  increaseQuantity: (productId: string) => Promise<void>;
+  decreaseQuantity: (productId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
   loadCartFromStorage: () => Promise<void>;
+  getTotalPrice: () => number;
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -22,46 +33,92 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const currentCart = [...get().cartItems];
 
-      const isProductInCart = currentCart.some(
-        (item) => item.id === product.id,
+      const existingItemIndex = currentCart.findIndex(
+        (item) => item.product.id === product.id,
       );
 
-      if (isProductInCart) {
-        return { success: false, message: 'Bu ürün zaten sepetinizde' };
+      if (existingItemIndex !== -1) {
+        currentCart[existingItemIndex].quantity += 1;
+        set({ cartItems: currentCart });
+        await AsyncStorage.setItem('cart', JSON.stringify(currentCart));
+        return { success: true, message: i18next.t('cart.quantityIncreased') };
       }
 
-      const updatedCart = [...currentCart, product];
-
+      const updatedCart = [
+        ...currentCart,
+        { id: product.id, product, quantity: 1 },
+      ];
       set({ cartItems: updatedCart });
-
       await AsyncStorage.setItem('cart', JSON.stringify(updatedCart));
-      return { success: true, message: 'Ürün sepete eklendi' };
+      return { success: true, message: i18next.t('cart.addedToCart') };
     } catch (error) {
-      set({ error: 'Sepete eklenirken bir hata oluştu' });
-      return { success: false, message: 'Sepete eklenirken bir hata oluştu' };
+      set({ error: i18next.t('cart.errorAddingToCart') });
+      return { success: false, message: i18next.t('cart.errorAddingToCart') };
     }
   },
 
   removeFromCart: async (productId: string) => {
     try {
       const currentCart = [...get().cartItems];
-      const updatedCart = currentCart.filter((item) => item.id !== productId);
+      const updatedCart = currentCart.filter(
+        (item) => item.product.id !== productId,
+      );
 
       set({ cartItems: updatedCart });
-
       await AsyncStorage.setItem('cart', JSON.stringify(updatedCart));
     } catch (error) {
-      set({ error: 'Ürün sepetten çıkarılırken bir hata oluştu' });
+      set({ error: i18next.t('cart.errorRemovingFromCart') });
+    }
+  },
+
+  increaseQuantity: async (productId: string) => {
+    try {
+      const currentCart = [...get().cartItems];
+      const itemIndex = currentCart.findIndex(
+        (item) => item.product.id === productId,
+      );
+
+      if (itemIndex !== -1) {
+        currentCart[itemIndex].quantity += 1;
+        set({ cartItems: currentCart });
+        await AsyncStorage.setItem('cart', JSON.stringify(currentCart));
+      }
+    } catch (error) {
+      set({ error: i18next.t('cart.errorIncreasingQuantity') });
+    }
+  },
+
+  decreaseQuantity: async (productId: string) => {
+    try {
+      const currentCart = [...get().cartItems];
+      const itemIndex = currentCart.findIndex(
+        (item) => item.product.id === productId,
+      );
+
+      if (itemIndex !== -1) {
+        if (currentCart[itemIndex].quantity > 1) {
+          currentCart[itemIndex].quantity -= 1;
+          set({ cartItems: currentCart });
+        } else {
+          const filteredCart = currentCart.filter(
+            (item) => item.product.id !== productId,
+          );
+          set({ cartItems: filteredCart });
+        }
+
+        await AsyncStorage.setItem('cart', JSON.stringify(get().cartItems));
+      }
+    } catch (error) {
+      set({ error: i18next.t('cart.errorDecreasingQuantity') });
     }
   },
 
   clearCart: async () => {
     try {
       set({ cartItems: [] });
-
       await AsyncStorage.removeItem('cart');
     } catch (error) {
-      set({ error: 'Sepet temizlenirken bir hata oluştu' });
+      set({ error: i18next.t('cart.errorClearingCart') });
     }
   },
 
@@ -72,12 +129,40 @@ export const useCartStore = create<CartState>((set, get) => ({
       const storedCart = await AsyncStorage.getItem('cart');
 
       if (storedCart) {
-        set({ cartItems: JSON.parse(storedCart), isLoading: false });
+        try {
+          const parsedCart = JSON.parse(storedCart);
+
+          if (parsedCart.length > 0) {
+            if (parsedCart[0] && !parsedCart[0].product && parsedCart[0].id) {
+              const convertedCart = parsedCart.map((item: CartItem) => ({
+                product: item,
+                quantity: 1,
+              }));
+              set({ cartItems: convertedCart, isLoading: false });
+              await AsyncStorage.setItem('cart', JSON.stringify(convertedCart));
+              return;
+            }
+          }
+
+          set({ cartItems: parsedCart, isLoading: false });
+        } catch (parseError) {
+          set({
+            cartItems: [],
+            isLoading: false,
+            error: i18next.t('cart.errorParsingCartData'),
+          });
+        }
       } else {
         set({ cartItems: [], isLoading: false });
       }
     } catch (error) {
-      set({ error: 'Sepet yüklenirken bir hata oluştu', isLoading: false });
+      set({ error: i18next.t('cart.errorLoadingCart'), isLoading: false });
     }
+  },
+
+  getTotalPrice: () => {
+    return get().cartItems.reduce((total, item) => {
+      return total + Number(item.product.price) * item.quantity;
+    }, 0);
   },
 }));

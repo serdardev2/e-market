@@ -3,7 +3,9 @@
     "home": "Ana Sayfa",
     "basket": "Sepet",
     "favorites": "Favoriler",
-    "profile": "Profil"
+    "profile": "Profil",
+    "error": "Hata",
+    "info": "Bilgi"
   },
   "home": {
     "welcome": "Hoş Geldiniz",
@@ -22,7 +24,20 @@
     "total": "Toplam",
     "remove": "Kaldır",
     "title": "Sepetim",
-    "emptyCartMessage": "Sepetiniz boş"
+    "emptyCartMessage": "Sepetiniz boş",
+    "totalPrice": "Toplam Fiyat",
+    "checkout": "Ödeme Yap"
+  },
+  "cart": {
+    "addedToCart": "Ürün sepete eklendi",
+    "quantityIncreased": "Ürün miktarı artırıldı",
+    "errorAddingToCart": "Sepete eklenirken bir hata oluştu",
+    "errorRemovingFromCart": "Ürün sepetten çıkarılırken bir hata oluştu",
+    "errorIncreasingQuantity": "Ürün miktarı artırılırken bir hata oluştu",
+    "errorDecreasingQuantity": "Ürün miktarı azaltılırken bir hata oluştu",
+    "errorClearingCart": "Sepet temizlenirken bir hata oluştu",
+    "errorParsingCartData": "Sepet verisi ayrıştırılamadı",
+    "errorLoadingCart": "Sepet yüklenirken bir hata oluştu"
   },
   "favorites": {
     "empty": "Favori ürününüz yok",
@@ -31,7 +46,12 @@
     "inCart": "Sepette",
     "addToCart": "Sepete Ekle",
     "emptyFavoritesMessage": "Favori ürününüz yok",
-    "emptyFavoritesDescription": "Favori ürünlerinizi buradan görebilir ve sepetinize ekleyebilirsiniz."
+    "emptyFavoritesDescription": "Favori ürünlerinizi buradan görebilir ve sepetinize ekleyebilirsiniz.",
+    "addedToFavorites": "Ürün favorilere eklendi",
+    "removedFromFavorites": "Ürün favorilerden çıkarıldı",
+    "errorAddingToFavorites": "Favorilere eklenirken bir hata oluştu",
+    "errorRemovingFromFavorites": "Favorilerden çıkarılırken bir hata oluştu",
+    "errorLoadingFavorites": "Favoriler yüklenirken bir hata oluştu"
   },
   "profile": {
     "orders": "Siparişlerim",

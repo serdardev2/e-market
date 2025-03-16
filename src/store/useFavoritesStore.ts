@@ -1,13 +1,18 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Product } from '../types/product';
+import i18next from 'i18next';
 
 interface FavoritesState {
   favorites: Product[];
   isLoading: boolean;
   error: string | null;
-  addToFavorites: (product: Product) => Promise<void>;
-  removeFromFavorites: (productId: string) => Promise<void>;
+  addToFavorites: (
+    product: Product,
+  ) => Promise<{ success: boolean; message: string }>;
+  removeFromFavorites: (
+    productId: string,
+  ) => Promise<{ success: boolean; message: string }>;
   clearFavorites: () => Promise<void>;
   loadFavoritesFromStorage: () => Promise<void>;
 }
@@ -26,7 +31,10 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
       );
 
       if (isProductInFavorites) {
-        return;
+        return {
+          success: false,
+          message: i18next.t('home.alreadyAddedToFavorites'),
+        };
       }
 
       const updatedFavorites = [...currentFavorites, product];
@@ -34,8 +42,16 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
       set({ favorites: updatedFavorites });
 
       await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      return {
+        success: true,
+        message: i18next.t('favorites.addedToFavorites'),
+      };
     } catch (error) {
-      set({ error: 'Favorilere eklenirken bir hata oluştu' });
+      set({ error: i18next.t('favorites.errorAddingToFavorites') });
+      return {
+        success: false,
+        message: i18next.t('favorites.errorAddingToFavorites'),
+      };
     }
   },
 
@@ -49,8 +65,16 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
       set({ favorites: updatedFavorites });
 
       await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      return {
+        success: true,
+        message: i18next.t('favorites.removedFromFavorites'),
+      };
     } catch (error) {
-      set({ error: 'Ürün favorilerden çıkarılırken bir hata oluştu' });
+      set({ error: i18next.t('favorites.errorRemovingFromFavorites') });
+      return {
+        success: false,
+        message: i18next.t('favorites.errorRemovingFromFavorites'),
+      };
     }
   },
 
@@ -60,7 +84,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
 
       await AsyncStorage.removeItem('favorites');
     } catch (error) {
-      set({ error: 'Favoriler temizlenirken bir hata oluştu' });
+      set({ error: i18next.t('favorites.errorClearingFavorites') });
     }
   },
 
@@ -76,7 +100,10 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
         set({ favorites: [], isLoading: false });
       }
     } catch (error) {
-      set({ error: 'Favoriler yüklenirken bir hata oluştu', isLoading: false });
+      set({
+        error: i18next.t('favorites.errorLoadingFavorites'),
+        isLoading: false,
+      });
     }
   },
 }));

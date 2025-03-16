@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { Product } from '../../types/product';
-import { useCartStore } from '@/src/store/useCardStore';
 import { useTranslation } from 'react-i18next';
+import { useCartStore } from '@/src/store/useCardStore';
+import { Colors } from '@/src/constants/Colors';
 
 interface AddToCartButtonProps {
   product: Product;
@@ -11,22 +12,49 @@ interface AddToCartButtonProps {
 export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   product,
 }) => {
-  const { addToCart, cartItems } = useCartStore();
+  const { addToCart, cartItems, loadCartFromStorage } = useCartStore();
   const [isInCart, setIsInCart] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const productInCart = cartItems.some((item) => item.id === product.id);
-    setIsInCart(productInCart);
+    loadCartFromStorage();
+  }, []);
+
+  useEffect(() => {
+    const checkIfInCart = () => {
+      if (cartItems && cartItems.length > 0) {
+        const firstItem = cartItems[0];
+
+        if (firstItem.product) {
+          const productInCart = cartItems.some(
+            (item) => item.product.id === product.id,
+          );
+          setIsInCart(productInCart);
+        } else if (firstItem.id) {
+          const productInCart = cartItems.some(
+            (item) => item.id === product.id,
+          );
+          setIsInCart(productInCart);
+        }
+      } else {
+        setIsInCart(false);
+      }
+    };
+
+    checkIfInCart();
   }, [cartItems, product.id]);
 
   const handleAddToCart = async () => {
-    if (isInCart) {
-      Alert.alert(t('home.alreadyAddedToCart'));
-      return;
+    try {
+      const result = await addToCart(product);
+      if (result && result.success) {
+        setIsInCart(true);
+      } else if (result && !result.success) {
+        Alert.alert(t('common.info'), t(result.message));
+      }
+    } catch (error) {
+      Alert.alert(t('common.error'), t('cart.errorAddingToCart'));
     }
-    addToCart(product);
-    setIsInCart(true);
   };
 
   return (
@@ -43,7 +71,7 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: Colors.common.primary,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 4,

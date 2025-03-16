@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerView: {
-    backgroundColor: Colors.common.priamry,
+    backgroundColor: Colors.common.primary,
     justifyContent: 'center',
     padding: 20,
   },
@@ -77,6 +77,6 @@ export const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.common.priamry,
+    color: Colors.common.primary,
   },
 });

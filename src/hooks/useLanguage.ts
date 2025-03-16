@@ -12,9 +12,7 @@ export const useLanguage = () => {
       try {
         await AsyncStorage.setItem(LANGUAGE_KEY, language);
         await i18n.changeLanguage(language);
-      } catch (error) {
-        console.error('Dil değiştirme hatası:', error);
-      }
+      } catch (error) {}
     },
     [i18n],
   );

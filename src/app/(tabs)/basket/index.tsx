@@ -6,29 +6,47 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Product } from '../../../types/product';
-import { useCartStore } from '@/src/store/useCardStore';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { Colors } from '@/src/constants/Colors';
+import { useCartStore } from '@/src/store/useCardStore';
+import { IconSymbol } from '@/src/components/ui/IconSymbol';
+import styles from './styles';
+
+type CartItem = {
+  product: {
+    id: string;
+    name: string;
+    brand: string;
+    model: string;
+    price: string | number;
+    image: string;
+  };
+  quantity: number;
+};
 
 export default function Basket() {
-  const { cartItems, isLoading, error, loadCartFromStorage, removeFromCart } =
-    useCartStore();
+  const {
+    cartItems,
+    error,
+    loadCartFromStorage,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    getTotalPrice,
+  } = useCartStore();
+  const isIos = Platform.OS === 'ios';
+  const insets = useSafeAreaInsets();
+
   const { t } = useTranslation();
 
   useEffect(() => {
     loadCartFromStorage();
   }, []);
-
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text>Sepet yükleniyor...</Text>
-      </SafeAreaView>
-    );
-  }
 
   if (error) {
     return (
@@ -38,128 +56,97 @@ export default function Basket() {
     );
   }
 
-  const renderItem = ({ item }: { item: Product }) => (
+  const renderItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
       <Image
-        source={{ uri: item.image }}
+        source={{ uri: item.product.image }}
         style={styles.productImage}
         resizeMode="contain"
       />
       <View style={styles.productDetails}>
-        <Text style={styles.productName}>{item.name}</Text>
+        <Text style={styles.productName}>{item.product.name}</Text>
         <Text style={styles.productBrand}>
-          {item.brand} - {item.model}
+          {item.product.brand} - {item.product.model}
         </Text>
-        <Text style={styles.productPrice}>{item.price} TL</Text>
+        <Text style={styles.productPrice}>{item.product.price} TL</Text>
+
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity
+            style={styles.quantityButton}
+            onPress={() => decreaseQuantity(item.product.id)}
+          >
+            <Text style={styles.quantityButtonText}>-</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.quantityText}>{item.quantity}</Text>
+
+          <TouchableOpacity
+            style={styles.quantityButton}
+            onPress={() => increaseQuantity(item.product.id)}
+          >
+            <Text style={styles.quantityButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <TouchableOpacity
         style={styles.removeButton}
-        onPress={() => removeFromCart(item.id)}
+        onPress={() => removeFromCart(item.product.id)}
       >
-        <Text style={styles.removeButtonText}>{t('basket.remove')}</Text>
+        <IconSymbol size={24} name={'trash'} color={'red'} />
       </TouchableOpacity>
     </View>
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>
-        {t('basket.title')}{' '}
-        <Text style={styles.titleLength}>({cartItems.length})</Text>
-      </Text>
+  const totalPrice = getTotalPrice();
+  const totalItems = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
 
-      {cartItems.length === 0 ? (
-        <View style={styles.emptyCart}>
-          <Text style={styles.emptyCartText}>
-            {t('basket.emptyCartMessage')}
-          </Text>
+  return (
+    <SafeAreaView style={styles.containerWithFooter}>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>
+          {t('basket.title')}{' '}
+          <Text style={styles.titleLength}>({totalItems})</Text>
+        </Text>
+
+        {cartItems.length === 0 ? (
+          <View style={styles.emptyCart}>
+            <Text style={styles.emptyCartText}>
+              {t('basket.emptyCartMessage')}
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={cartItems}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.product.id}
+            contentContainerStyle={styles.list}
+          />
+        )}
+      </View>
+
+      {cartItems.length > 0 && (
+        <View
+          style={[
+            styles.footer,
+            isIos && { paddingBottom: insets.bottom + 40 },
+          ]}
+        >
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalLabel}>{t('basket.totalPrice')}</Text>
+            <Text style={styles.totalPrice}>{totalPrice.toFixed(2)} TL</Text>
+          </View>
+
+          <TouchableOpacity style={styles.checkoutButton}>
+            <Text style={styles.checkoutButtonText}>
+              {t('basket.checkout')}
+            </Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <FlatList
-          data={cartItems}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          contentContainerStyle={styles.list}
-        />
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 32,
-  },
-  titleLength: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: Colors.common.priamry,
-  },
-  cartItem: {
-    flexDirection: 'row',
-    padding: 12,
-    backgroundColor: 'white',
-    borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  productImage: {
-    width: 60,
-    height: 60,
-    marginRight: 12,
-  },
-  productDetails: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  productBrand: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
-  },
-  productPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 4,
-  },
-  removeButton: {
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-  },
-  removeButtonText: {
-    color: 'red',
-    fontWeight: '600',
-  },
-  list: {
-    paddingBottom: 16,
-  },
-  emptyCart: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyCartText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 16,
-  },
-});
