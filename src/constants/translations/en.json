@@ -1,7 +1,7 @@
 {
   "common": {
     "home": "Home",
-    "basket": "Cart",
+    "cart": "Cart",
     "favorites": "Favorites",
     "profile": "Profile",
     "error": "Error",
@@ -19,15 +19,6 @@
     "inCart": "In Cart",
     "alreadyAddedToCart": "Already added to cart"
   },
-  "basket": {
-    "empty": "Your cart is empty",
-    "total": "Total",
-    "remove": "Remove",
-    "title": "My Cart",
-    "emptyCartMessage": "Your cart is empty",
-    "totalPrice": "Total Price",
-    "checkout": "Checkout"
-  },
   "cart": {
     "addedToCart": "Product added to cart",
     "quantityIncreased": "Product quantity increased",
@@ -37,7 +28,14 @@
     "errorDecreasingQuantity": "An error occurred while decreasing quantity",
     "errorClearingCart": "An error occurred while clearing cart",
     "errorParsingCartData": "Cart data could not be parsed",
-    "errorLoadingCart": "An error occurred while loading cart"
+    "errorLoadingCart": "An error occurred while loading cart",
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "remove": "Remove",
+    "title": "My Cart",
+    "emptyCartMessage": "Your cart is empty",
+    "totalPrice": "Total Price",
+    "checkout": "Checkout"
   },
   "favorites": {
     "empty": "No favorite products",

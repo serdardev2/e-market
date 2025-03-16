@@ -1,7 +1,7 @@
 {
   "common": {
     "home": "Ana Sayfa",
-    "basket": "Sepet",
+    "cart": "Sepet",
     "favorites": "Favoriler",
     "profile": "Profil",
     "error": "Hata",
@@ -19,15 +19,6 @@
     "inCart": "Sepette",
     "alreadyAddedToCart": "Zaten sepete eklendi"
   },
-  "basket": {
-    "empty": "Sepetiniz boş",
-    "total": "Toplam",
-    "remove": "Kaldır",
-    "title": "Sepetim",
-    "emptyCartMessage": "Sepetiniz boş",
-    "totalPrice": "Toplam Fiyat",
-    "checkout": "Ödeme Yap"
-  },
   "cart": {
     "addedToCart": "Ürün sepete eklendi",
     "quantityIncreased": "Ürün miktarı artırıldı",
@@ -37,7 +28,14 @@
     "errorDecreasingQuantity": "Ürün miktarı azaltılırken bir hata oluştu",
     "errorClearingCart": "Sepet temizlenirken bir hata oluştu",
     "errorParsingCartData": "Sepet verisi ayrıştırılamadı",
-    "errorLoadingCart": "Sepet yüklenirken bir hata oluştu"
+    "errorLoadingCart": "Sepet yüklenirken bir hata oluştu",
+    "empty": "Sepetiniz boş",
+    "total": "Toplam",
+    "remove": "Kaldır",
+    "title": "Sepetim",
+    "emptyCartMessage": "Sepetiniz boş",
+    "totalPrice": "Toplam Fiyat",
+    "checkout": "Ödeme Yap"
   },
   "favorites": {
     "empty": "Favori ürününüz yok",

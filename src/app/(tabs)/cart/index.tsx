@@ -11,7 +11,7 @@ import CartItemComp, { CartItem } from '@/src/components/Card/CardItem';
 
 const ITEM_HEIGHT = 120;
 
-export default function Basket() {
+export default function Cart() {
   const [localCartItems, setLocalCartItems] = useState<CartItem[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
@@ -94,14 +94,14 @@ export default function Basket() {
     <SafeAreaView style={styles.containerWithFooter}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>
-          {t('basket.title')}{' '}
+          {t('cart.title')}{' '}
           <Text style={styles.titleLength}>({totalItems})</Text>
         </Text>
 
         {localCartItems.length === 0 ? (
           <View style={styles.emptyCart}>
             <Text style={styles.emptyCartText}>
-              {t('basket.emptyCartMessage')}
+              {t('cart.emptyCartMessage')}
             </Text>
           </View>
         ) : (
@@ -130,14 +130,12 @@ export default function Basket() {
           ]}
         >
           <View style={styles.totalContainer}>
-            <Text style={styles.totalLabel}>{t('basket.totalPrice')}</Text>
+            <Text style={styles.totalLabel}>{t('cart.totalPrice')}</Text>
             <Text style={styles.totalPrice}>{totalPrice.toFixed(2)} TL</Text>
           </View>
 
           <TouchableOpacity style={styles.checkoutButton}>
-            <Text style={styles.checkoutButtonText}>
-              {t('basket.checkout')}
-            </Text>
+            <Text style={styles.checkoutButtonText}>{t('cart.checkout')}</Text>
           </TouchableOpacity>
         </View>
       )}

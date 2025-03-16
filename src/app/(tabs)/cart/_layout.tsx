@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-export default function BasketStack() {
+export default function CartStack() {
   return (
     <Stack>
       <Stack.Screen
