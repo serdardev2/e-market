@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useProductStore } from '../../../store/useProductStore';
 import { useEffect } from 'react';
 import { Product } from '../../../types/product';
-import { styles } from './styles';
+import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AddToCartButton } from '@/src/components/Button/AddToCardButton';
 import { useFavoritesStore } from '../../../store/useFavoritesStore';
