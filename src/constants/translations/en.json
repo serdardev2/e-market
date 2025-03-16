@@ -18,7 +18,10 @@
     "alreadyAddedToFavorites": "Already added to favorites",
     "inCart": "In Cart",
     "alreadyAddedToCart": "Already added to cart",
-    "removeFromCart": "Remove"
+    "removeFromCart": "Remove",
+    "searchProducts": "Search Products",
+    "noSearchResults": "No search results",
+    "clearSearch": "Clear Search"
   },
   "cart": {
     "addedToCart": "Product added to cart",

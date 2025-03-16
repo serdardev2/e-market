@@ -17,6 +17,8 @@ import { useFavoritesStore } from '../../../store/useFavoritesStore';
 import { FavoriteButton } from '@/src/components/Button/FavoritesButton';
 import { Colors } from '@/src/constants/Colors';
 import { router } from 'expo-router';
+import { MainInput } from '@/src/components/Input/MainInput';
+import { IconSymbol } from '@/src/components/ui/IconSymbol';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -25,6 +27,8 @@ export default function Home() {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
@@ -33,13 +37,35 @@ export default function Home() {
   }, [fetchProducts]);
 
   useEffect(() => {
-    if (products.length > 0) {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const filtered = products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(query) ||
+          product.brand.toLowerCase().includes(query) ||
+          product.model.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query),
+      );
+      setFilteredProducts(filtered);
+      setDisplayedProducts(filtered.slice(0, ITEMS_PER_PAGE));
+      setCurrentPage(1);
+    } else {
+      setFilteredProducts(products);
       setDisplayedProducts(products.slice(0, currentPage * ITEMS_PER_PAGE));
     }
-  }, [currentPage, products]);
+  }, [searchQuery, products]);
+
+  useEffect(() => {
+    const productsToDisplay = searchQuery.trim() ? filteredProducts : products;
+    setDisplayedProducts(
+      productsToDisplay.slice(0, currentPage * ITEMS_PER_PAGE),
+    );
+  }, [currentPage, filteredProducts, products]);
 
   const loadMoreProducts = () => {
-    if (displayedProducts.length < products.length && !isLoadingMore) {
+    const productsToDisplay = searchQuery.trim() ? filteredProducts : products;
+
+    if (displayedProducts.length < productsToDisplay.length && !isLoadingMore) {
       setIsLoadingMore(true);
 
       setTimeout(() => {
@@ -47,6 +73,14 @@ export default function Home() {
         setIsLoadingMore(false);
       }, 500);
     }
+  };
+
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
   };
 
   if (isLoading && displayedProducts.length === 0) {
@@ -116,7 +150,9 @@ export default function Home() {
   };
 
   const renderFooter = () => {
-    if (!isLoadingMore && displayedProducts.length >= products.length)
+    const productsToDisplay = searchQuery.trim() ? filteredProducts : products;
+
+    if (!isLoadingMore && displayedProducts.length >= productsToDisplay.length)
       return null;
 
     return (
@@ -126,25 +162,57 @@ export default function Home() {
     );
   };
 
+  const renderEmptyResult = () => {
+    if (searchQuery.trim() && displayedProducts.length === 0) {
+      return (
+        <View style={styles.emptySearchContainer}>
+          <IconSymbol name="magnifyingglass" size={60} color="#CCCCCC" />
+          <Text style={styles.emptySearchText}>
+            {t('home.noSearchResults', { query: searchQuery })}
+          </Text>
+          <TouchableOpacity
+            style={styles.clearSearchButton}
+            onPress={clearSearch}
+          >
+            <Text style={styles.clearSearchButtonText}>
+              {t('home.clearSearch')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
         <Text style={styles.subtitle}>{t('home.eMarket')}</Text>
+        <View style={styles.searchContainer}>
+          <MainInput
+            value={searchQuery}
+            onChangeText={handleSearch}
+            placeholder={t('home.searchProducts')}
+            onClear={clearSearch}
+          />
+        </View>
       </View>
 
-      <FlatList
-        style={styles.list}
-        showsVerticalScrollIndicator={false}
-        data={displayedProducts}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        onEndReached={loadMoreProducts}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-      />
+      {renderEmptyResult() || (
+        <FlatList
+          style={styles.list}
+          showsVerticalScrollIndicator={false}
+          data={displayedProducts}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          onEndReached={loadMoreProducts}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+        />
+      )}
     </SafeAreaView>
   );
 }

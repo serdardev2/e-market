@@ -18,7 +18,10 @@
     "alreadyAddedToFavorites": "Zaten favorilere eklendi",
     "inCart": "Sepette",
     "alreadyAddedToCart": "Zaten sepete eklendi",
-    "removeFromCart": "Çıkar"
+    "removeFromCart": "Çıkar",
+    "searchProducts": "Ürün Ara",
+    "noSearchResults": "Aradığınız ürün bulunamadı",
+    "clearSearch": "Aramayı Temizle"
   },
   "cart": {
     "addedToCart": "Ürün sepete eklendi",

@@ -86,4 +86,32 @@ export default StyleSheet.create({
     fontWeight: '600',
     color: Colors.common.primary,
   },
+  searchContainer: {
+    marginTop: 12,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  emptySearchContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  emptySearchText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
+    marginTop: 12,
+  },
+  clearSearchButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.common.primary,
+    borderRadius: 8,
+  },
+  clearSearchButtonText: {
+    color: 'white',
+    fontWeight: '600',
+  },
 });
