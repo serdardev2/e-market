@@ -7,46 +7,28 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '../hooks/useColorScheme';
 import '../i18n';
-import { initializeStores } from '../store/initialzeStores';
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [appIsReady, setAppIsReady] = useState(false);
-
   const [loaded] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        await initializeStores();
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-    prepare();
-  }, []);
-
-  useEffect(() => {
-    if (loaded && appIsReady) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, appIsReady]);
+  }, [loaded]);
 
-  if (!loaded || !appIsReady) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+  if (!loaded) {
+    return null;
   }
 
   return (
