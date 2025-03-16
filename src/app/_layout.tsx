@@ -18,32 +18,35 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [storesInitialized, setStoresInitialized] = useState(false);
+  const [appIsReady, setAppIsReady] = useState(false);
+
   const [loaded] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
-    async function initialize() {
+    async function prepare() {
       try {
         await initializeStores();
-        setStoresInitialized(true);
-      } catch (error) {
-        setStoresInitialized(true);
+      } finally {
+        setAppIsReady(true);
       }
     }
-
-    initialize();
+    prepare();
   }, []);
 
   useEffect(() => {
-    if (loaded && storesInitialized) {
+    if (loaded && appIsReady) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, storesInitialized]);
+  }, [loaded, appIsReady]);
 
-  if (!loaded || !storesInitialized) {
-    return null;
+  if (!loaded || !appIsReady) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
