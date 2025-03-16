@@ -15,6 +15,11 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
   },
+  titleCount: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: Colors.common.yellow,
+  },
   list: {
     padding: 16,
   },

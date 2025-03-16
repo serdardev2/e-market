@@ -5,34 +5,48 @@ import { Colors } from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { useCartStore } from '@/src/store/useCardStore';
 import { Tabs } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Platform, View, Text, StyleSheet } from 'react-native';
+
+const CartBadge = React.memo(({ count }: { count: number }) => {
+  if (count <= 0) return null;
+
+  return (
+    <View style={styles.badge}>
+      <Text style={styles.badgeText}>{count}</Text>
+    </View>
+  );
+});
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { cartItems, loadCartFromStorage } = useCartStore();
 
-  useEffect(() => {
-    loadCartFromStorage();
+  const cartItemsCount = useCartStore((state) => {
+    return state.cartItems.reduce((total, item) => total + item.quantity, 0);
+  });
+
+  const tabBarStyle = useMemo(() => {
+    return Platform.select({
+      ios: {
+        position: 'absolute' as const,
+      },
+      default: {},
+    });
   }, []);
 
+  const screenOptions = useMemo(() => {
+    return {
+      tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+      headerShown: false,
+      tabBarShowLabel: false,
+      tabBarButton: HapticTab,
+      tabBarBackground: TabBarBackground,
+      tabBarStyle,
+    };
+  }, [colorScheme, tabBarStyle]);
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}
-    >
+    <Tabs screenOptions={screenOptions}>
       <Tabs.Screen
         name="home"
         options={{
@@ -49,11 +63,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <View>
               <IconSymbol size={32} name="cart.fill" color={color} />
-              {cartItems.length > 0 && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{cartItems.length}</Text>
-                </View>
-              )}
+              <CartBadge count={cartItemsCount} />
             </View>
           ),
         }}

@@ -13,13 +13,9 @@ interface AddToCartButtonProps {
 export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   product,
 }) => {
-  const { addToCart, cartItems, loadCartFromStorage } = useCartStore();
+  const { addToCart, cartItems } = useCartStore();
   const [isInCart, setIsInCart] = useState(false);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    loadCartFromStorage();
-  }, []);
 
   useEffect(() => {
     const checkIfInCart = () => {

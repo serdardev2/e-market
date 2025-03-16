@@ -14,18 +14,16 @@ import { IconSymbol } from '@/src/components/ui/IconSymbol';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/src/store/useCardStore';
 import styles from './styles';
-import { MainButton } from '@/src/components/Button/MainButton';
 import { Colors } from '@/src/constants/Colors';
 
 export default function Favorites() {
   const { favorites, error, loadFavoritesFromStorage, removeFromFavorites } =
     useFavoritesStore();
-  const { addToCart, cartItems, loadCartFromStorage } = useCartStore();
+  const { addToCart, cartItems } = useCartStore();
   const { t } = useTranslation();
 
   useEffect(() => {
     loadFavoritesFromStorage();
-    loadCartFromStorage();
   }, []);
 
   if (error) {
@@ -114,7 +112,8 @@ export default function Favorites() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>
-          {t('favorites.title')} ({favorites.length})
+          {t('favorites.title')}{' '}
+          <Text style={styles.titleCount}>({favorites.length})</Text>
         </Text>
       </View>
 
@@ -130,6 +129,7 @@ export default function Favorites() {
         </View>
       ) : (
         <FlatList
+          bounces={false}
           style={styles.listContainer}
           data={favorites}
           renderItem={renderItem}

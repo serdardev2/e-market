@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet } from 'react-native';
 import { IconSymbol } from '@/src/components/ui/IconSymbol';
 import { useFavoritesStore } from '@/src/store/useFavoritesStore';
 import { Product } from '@/src/types/product';
+import { Colors } from '@/src/constants/Colors';
 
 interface FavoriteButtonProps {
   product: Product;
@@ -31,7 +32,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ product }) => {
       <IconSymbol
         size={24}
         name={isFavorite ? 'star.fill' : 'star'}
-        color={isFavorite ? '#FFD700' : '#666666'}
+        color={isFavorite ? Colors.common.yellow : Colors.common.grey}
       />
     </TouchableOpacity>
   );

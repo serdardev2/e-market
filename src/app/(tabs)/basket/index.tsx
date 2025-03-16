@@ -1,52 +1,86 @@
-import React, { useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  Platform,
-} from 'react-native';
+import React, { useCallback, useState, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, Platform } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/src/store/useCardStore';
-import { IconSymbol } from '@/src/components/ui/IconSymbol';
 import styles from './styles';
+import CartItemComp, { CartItem } from '@/src/components/Card/CardItem';
 
-type CartItem = {
-  product: {
-    id: string;
-    name: string;
-    brand: string;
-    model: string;
-    price: string | number;
-    image: string;
-  };
-  quantity: number;
-};
+const ITEM_HEIGHT = 120;
 
 export default function Basket() {
-  const {
-    cartItems,
-    error,
-    loadCartFromStorage,
-    removeFromCart,
-    increaseQuantity,
-    decreaseQuantity,
-    getTotalPrice,
-  } = useCartStore();
-  const isIos = Platform.OS === 'ios';
-  const insets = useSafeAreaInsets();
+  const [localCartItems, setLocalCartItems] = useState<CartItem[]>([]);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
-  const { t } = useTranslation();
+  const cartItems = useCartStore((state) => state.cartItems);
+  const error = useCartStore((state) => state.error);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const increaseQuantity = useCartStore((state) => state.increaseQuantity);
+  const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
+  const getTotalPrice = useCartStore((state) => state.getTotalPrice);
 
   useEffect(() => {
-    loadCartFromStorage();
-  }, []);
+    setLocalCartItems([...cartItems]);
+  }, [cartItems]);
+
+  const isIos = Platform.OS === 'ios';
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+
+  const handleIncrease = useCallback(
+    (id: string) => {
+      increaseQuantity(id);
+      setUpdateTrigger((prev) => prev + 1);
+    },
+    [increaseQuantity],
+  );
+
+  const handleDecrease = useCallback(
+    (id: string) => {
+      decreaseQuantity(id);
+      setUpdateTrigger((prev) => prev + 1);
+    },
+    [decreaseQuantity],
+  );
+
+  const handleRemove = useCallback(
+    (id: string) => {
+      removeFromCart(id);
+    },
+    [removeFromCart],
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: CartItem }) => (
+      <CartItemComp
+        item={item}
+        onDecrease={handleDecrease}
+        onIncrease={handleIncrease}
+        onRemove={handleRemove}
+      />
+    ),
+    [handleDecrease, handleIncrease, handleRemove],
+  );
+
+  const keyExtractor = useCallback((item: CartItem) => item.product.id, []);
+
+  const getItemLayout = useCallback(
+    (data: ArrayLike<CartItem> | null | undefined, index: number) => ({
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
+    [],
+  );
+
+  const totalPrice = getTotalPrice();
+  const totalItems = localCartItems.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
 
   if (error) {
     return (
@@ -56,53 +90,6 @@ export default function Basket() {
     );
   }
 
-  const renderItem = ({ item }: { item: CartItem }) => (
-    <View style={styles.cartItem}>
-      <Image
-        source={{ uri: item.product.image }}
-        style={styles.productImage}
-        resizeMode="contain"
-      />
-      <View style={styles.productDetails}>
-        <Text style={styles.productName}>{item.product.name}</Text>
-        <Text style={styles.productBrand}>
-          {item.product.brand} - {item.product.model}
-        </Text>
-        <Text style={styles.productPrice}>{item.product.price} TL</Text>
-
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity
-            style={styles.quantityButton}
-            onPress={() => decreaseQuantity(item.product.id)}
-          >
-            <Text style={styles.quantityButtonText}>-</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.quantityText}>{item.quantity}</Text>
-
-          <TouchableOpacity
-            style={styles.quantityButton}
-            onPress={() => increaseQuantity(item.product.id)}
-          >
-            <Text style={styles.quantityButtonText}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <TouchableOpacity
-        style={styles.removeButton}
-        onPress={() => removeFromCart(item.product.id)}
-      >
-        <IconSymbol size={24} name={'trash'} color={'red'} />
-      </TouchableOpacity>
-    </View>
-  );
-
-  const totalPrice = getTotalPrice();
-  const totalItems = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
-
   return (
     <SafeAreaView style={styles.containerWithFooter}>
       <View style={styles.contentContainer}>
@@ -111,7 +98,7 @@ export default function Basket() {
           <Text style={styles.titleLength}>({totalItems})</Text>
         </Text>
 
-        {cartItems.length === 0 ? (
+        {localCartItems.length === 0 ? (
           <View style={styles.emptyCart}>
             <Text style={styles.emptyCartText}>
               {t('basket.emptyCartMessage')}
@@ -119,16 +106,23 @@ export default function Basket() {
           </View>
         ) : (
           <FlatList
+            bounces={false}
             showsVerticalScrollIndicator={false}
-            data={cartItems}
+            data={localCartItems}
+            extraData={updateTrigger}
             renderItem={renderItem}
-            keyExtractor={(item) => item.product.id}
+            keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            initialNumToRender={8}
             contentContainerStyle={styles.list}
           />
         )}
       </View>
 
-      {cartItems.length > 0 && (
+      {localCartItems.length > 0 && (
         <View
           style={[
             styles.footer,

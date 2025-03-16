@@ -14,6 +14,7 @@ export const useProductStore = create<ProductState>((set) => ({
   isLoading: false,
   error: null,
   fetchProducts: async () => {
+    if (useProductStore.getState().products.length > 0) return;
     try {
       set({ isLoading: true, error: null });
       const products = await ProductService.getProducts();

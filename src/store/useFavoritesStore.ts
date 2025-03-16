@@ -88,22 +88,5 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     }
   },
 
-  loadFavoritesFromStorage: async () => {
-    try {
-      set({ isLoading: true });
-
-      const storedFavorites = await AsyncStorage.getItem('favorites');
-
-      if (storedFavorites) {
-        set({ favorites: JSON.parse(storedFavorites), isLoading: false });
-      } else {
-        set({ favorites: [], isLoading: false });
-      }
-    } catch (error) {
-      set({
-        error: i18next.t('favorites.errorLoadingFavorites'),
-        isLoading: false,
-      });
-    }
-  },
+  loadFavoritesFromStorage: async () => {},
 }));

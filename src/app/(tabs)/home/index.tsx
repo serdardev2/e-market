@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     fetchProducts();
     loadFavoritesFromStorage();
-  }, [fetchProducts, loadFavoritesFromStorage]);
+  }, [fetchProducts]);
 
   if (isLoading) {
     return (

@@ -16,13 +16,56 @@ interface CartState {
   addToCart: (
     product: Product,
   ) => Promise<{ success: boolean; message: string }>;
-  removeFromCart: (productId: string) => Promise<void>;
-  increaseQuantity: (productId: string) => Promise<void>;
-  decreaseQuantity: (productId: string) => Promise<void>;
-  clearCart: () => Promise<void>;
-  loadCartFromStorage: () => Promise<void>;
+  removeFromCart: (productId: string) => void;
+  increaseQuantity: (productId: string) => void;
+  decreaseQuantity: (productId: string) => void;
+  clearCart: () => void;
   getTotalPrice: () => number;
 }
+
+const saveCartToStorage = (cart: CartItem[]) => {
+  AsyncStorage.setItem('cart', JSON.stringify(cart)).catch(() => {});
+};
+
+const compareAndLog = (a: any, b: any, path = 'root'): boolean => {
+  if (a === b) return true;
+
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) {
+      return false;
+    }
+
+    for (let i = 0; i < a.length; i++) {
+      if (!compareAndLog(a[i], b[i], `${path}[${i}]`)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (
+    typeof a === 'object' &&
+    a !== null &&
+    typeof b === 'object' &&
+    b !== null
+  ) {
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+
+    if (keysA.length !== keysB.length) {
+      return false;
+    }
+
+    for (const key of keysA) {
+      if (!compareAndLog(a[key], b[key], `${path}.${key}`)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  return false;
+};
 
 export const useCartStore = create<CartState>((set, get) => ({
   cartItems: [],
@@ -32,24 +75,30 @@ export const useCartStore = create<CartState>((set, get) => ({
   addToCart: async (product: Product) => {
     try {
       const currentCart = [...get().cartItems];
-
       const existingItemIndex = currentCart.findIndex(
         (item) => item.product.id === product.id,
       );
 
+      let updatedCart;
       if (existingItemIndex !== -1) {
-        currentCart[existingItemIndex].quantity += 1;
-        set({ cartItems: currentCart });
-        await AsyncStorage.setItem('cart', JSON.stringify(currentCart));
-        return { success: true, message: i18next.t('cart.quantityIncreased') };
+        updatedCart = [
+          ...currentCart.slice(0, existingItemIndex),
+          {
+            ...currentCart[existingItemIndex],
+            quantity: currentCart[existingItemIndex].quantity + 1,
+          },
+          ...currentCart.slice(existingItemIndex + 1),
+        ];
+      } else {
+        updatedCart = [
+          ...currentCart,
+          { id: product.id, product, quantity: 1 },
+        ];
       }
 
-      const updatedCart = [
-        ...currentCart,
-        { id: product.id, product, quantity: 1 },
-      ];
       set({ cartItems: updatedCart });
-      await AsyncStorage.setItem('cart', JSON.stringify(updatedCart));
+      saveCartToStorage(updatedCart);
+
       return { success: true, message: i18next.t('cart.addedToCart') };
     } catch (error) {
       set({ error: i18next.t('cart.errorAddingToCart') });
@@ -57,107 +106,68 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  removeFromCart: async (productId: string) => {
-    try {
-      const currentCart = [...get().cartItems];
-      const updatedCart = currentCart.filter(
-        (item) => item.product.id !== productId,
-      );
+  removeFromCart: (productId: string) => {
+    const currentCart = [...get().cartItems];
+    const updatedCart = currentCart.filter(
+      (item) => item.product.id !== productId,
+    );
+
+    set({ cartItems: updatedCart });
+    saveCartToStorage(updatedCart);
+  },
+
+  increaseQuantity: (productId: string) => {
+    const currentCart = [...get().cartItems];
+    const itemIndex = currentCart.findIndex(
+      (item) => item.product.id === productId,
+    );
+
+    if (itemIndex !== -1) {
+      const updatedCart = [
+        ...currentCart.slice(0, itemIndex),
+        {
+          ...currentCart[itemIndex],
+          quantity: currentCart[itemIndex].quantity + 1,
+        },
+        ...currentCart.slice(itemIndex + 1),
+      ];
 
       set({ cartItems: updatedCart });
-      await AsyncStorage.setItem('cart', JSON.stringify(updatedCart));
-    } catch (error) {
-      set({ error: i18next.t('cart.errorRemovingFromCart') });
+      saveCartToStorage(updatedCart);
     }
   },
 
-  increaseQuantity: async (productId: string) => {
-    try {
-      const currentCart = [...get().cartItems];
-      const itemIndex = currentCart.findIndex(
-        (item) => item.product.id === productId,
-      );
+  decreaseQuantity: (productId: string) => {
+    const currentCart = [...get().cartItems];
+    const itemIndex = currentCart.findIndex(
+      (item) => item.product.id === productId,
+    );
 
-      if (itemIndex !== -1) {
-        currentCart[itemIndex].quantity += 1;
-        set({ cartItems: currentCart });
-        await AsyncStorage.setItem('cart', JSON.stringify(currentCart));
-      }
-    } catch (error) {
-      set({ error: i18next.t('cart.errorIncreasingQuantity') });
-    }
-  },
-
-  decreaseQuantity: async (productId: string) => {
-    try {
-      const currentCart = [...get().cartItems];
-      const itemIndex = currentCart.findIndex(
-        (item) => item.product.id === productId,
-      );
-
-      if (itemIndex !== -1) {
-        if (currentCart[itemIndex].quantity > 1) {
-          currentCart[itemIndex].quantity -= 1;
-          set({ cartItems: currentCart });
-        } else {
-          const filteredCart = currentCart.filter(
-            (item) => item.product.id !== productId,
-          );
-          set({ cartItems: filteredCart });
-        }
-
-        await AsyncStorage.setItem('cart', JSON.stringify(get().cartItems));
-      }
-    } catch (error) {
-      set({ error: i18next.t('cart.errorDecreasingQuantity') });
-    }
-  },
-
-  clearCart: async () => {
-    try {
-      set({ cartItems: [] });
-      await AsyncStorage.removeItem('cart');
-    } catch (error) {
-      set({ error: i18next.t('cart.errorClearingCart') });
-    }
-  },
-
-  loadCartFromStorage: async () => {
-    try {
-      set({ isLoading: true });
-
-      const storedCart = await AsyncStorage.getItem('cart');
-
-      if (storedCart) {
-        try {
-          const parsedCart = JSON.parse(storedCart);
-
-          if (parsedCart.length > 0) {
-            if (parsedCart[0] && !parsedCart[0].product && parsedCart[0].id) {
-              const convertedCart = parsedCart.map((item: CartItem) => ({
-                product: item,
-                quantity: 1,
-              }));
-              set({ cartItems: convertedCart, isLoading: false });
-              await AsyncStorage.setItem('cart', JSON.stringify(convertedCart));
-              return;
-            }
-          }
-
-          set({ cartItems: parsedCart, isLoading: false });
-        } catch (parseError) {
-          set({
-            cartItems: [],
-            isLoading: false,
-            error: i18next.t('cart.errorParsingCartData'),
-          });
-        }
+    if (itemIndex !== -1) {
+      if (currentCart[itemIndex].quantity > 1) {
+        const updatedCart = [
+          ...currentCart.slice(0, itemIndex),
+          {
+            ...currentCart[itemIndex],
+            quantity: currentCart[itemIndex].quantity - 1,
+          },
+          ...currentCart.slice(itemIndex + 1),
+        ];
+        set({ cartItems: updatedCart });
+        saveCartToStorage(updatedCart);
       } else {
-        set({ cartItems: [], isLoading: false });
+        const filteredCart = currentCart.filter(
+          (item) => item.product.id !== productId,
+        );
+        set({ cartItems: filteredCart });
+        saveCartToStorage(filteredCart);
       }
-    } catch (error) {
-      set({ error: i18next.t('cart.errorLoadingCart'), isLoading: false });
     }
+  },
+
+  clearCart: () => {
+    set({ cartItems: [] });
+    AsyncStorage.removeItem('cart').catch(() => {});
   },
 
   getTotalPrice: () => {
