@@ -13,7 +13,6 @@ import { Product } from '../../../types/product';
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AddToCartButton } from '@/src/components/Button/AddToCardButton';
-import { useFavoritesStore } from '../../../store/useFavoritesStore';
 import { FavoriteButton } from '@/src/components/Button/FavoritesButton';
 import { Colors } from '@/src/constants/Colors';
 import { router } from 'expo-router';
@@ -23,7 +22,6 @@ import { IconSymbol } from '@/src/components/ui/IconSymbol';
 export default function Home() {
   const { t } = useTranslation();
   const { products, isLoading, error, fetchProducts } = useProductStore();
-  const { loadFavoritesFromStorage } = useFavoritesStore();
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -33,7 +31,6 @@ export default function Home() {
 
   useEffect(() => {
     fetchProducts();
-    loadFavoritesFromStorage();
   }, [fetchProducts]);
 
   useEffect(() => {

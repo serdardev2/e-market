@@ -17,14 +17,9 @@ import styles from './styles';
 import { Colors } from '@/src/constants/Colors';
 
 export default function Favorites() {
-  const { favorites, error, loadFavoritesFromStorage, removeFromFavorites } =
-    useFavoritesStore();
+  const { favorites, error, removeFromFavorites } = useFavoritesStore();
   const { addToCart, removeFromCart, cartItems } = useCartStore();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    loadFavoritesFromStorage();
-  }, []);
 
   if (error) {
     return (

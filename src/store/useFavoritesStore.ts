@@ -14,7 +14,6 @@ interface FavoritesState {
     productId: string,
   ) => Promise<{ success: boolean; message: string }>;
   clearFavorites: () => Promise<void>;
-  loadFavoritesFromStorage: () => Promise<void>;
 }
 
 export const useFavoritesStore = create<FavoritesState>((set, get) => ({
@@ -87,6 +86,4 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
       set({ error: i18next.t('favorites.errorClearingFavorites') });
     }
   },
-
-  loadFavoritesFromStorage: async () => {},
 }));
