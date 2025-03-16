@@ -21,7 +21,8 @@
     "removeFromCart": "Remove",
     "searchProducts": "Search Products",
     "noSearchResults": "No search results",
-    "clearSearch": "Clear Search"
+    "clearSearch": "Clear Search",
+    "noFilterResults": "No products found matching your filter criteria"
   },
   "cart": {
     "addedToCart": "Product added to cart",
@@ -74,5 +75,17 @@
     "addresses": "My Addresses",
     "settings": "Settings",
     "logout": "Logout"
+  },
+  "filter": {
+    "title": "Filters",
+    "priceRange": "Price Range",
+    "min": "Min",
+    "max": "Max",
+    "brands": "Brands",
+    "models": "Models",
+    "clear": "Clear",
+    "apply": "Apply",
+    "activeFilters": "Active Filters",
+    "clearFilters": "Clear Filters"
   }
 }

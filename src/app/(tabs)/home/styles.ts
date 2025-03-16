@@ -4,8 +4,11 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
+  },
+  inlineContainer: {
+    paddingHorizontal: 20,
+    flex: 1,
   },
   centered: {
     flex: 1,
@@ -33,8 +36,7 @@ export default StyleSheet.create({
     fontSize: 16,
   },
   list: {
-    paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
   footer: {
     padding: 10,
@@ -86,11 +88,7 @@ export default StyleSheet.create({
     fontWeight: '600',
     color: Colors.common.primary,
   },
-  searchContainer: {
-    marginTop: 12,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
+
   emptySearchContainer: {
     flex: 1,
     alignItems: 'center',
@@ -111,6 +109,62 @@ export default StyleSheet.create({
     borderRadius: 8,
   },
   clearSearchButtonText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  searchContainer: {
+    flex: 1,
+    marginRight: 8,
+    marginTop: 8,
+  },
+  filterButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    marginTop: 8,
+  },
+  filterButtonActive: {
+    backgroundColor: Colors.common.primary,
+  },
+  activeFiltersBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#f0f8ff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  activeFiltersText: {
+    fontSize: 12,
+    color: '#333',
+    flex: 1,
+  },
+  clearFiltersText: {
+    fontSize: 12,
+    color: Colors.common.primary,
+    fontWeight: '600',
+  },
+  emptyActionButtons: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  clearButton: {
+    marginHorizontal: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.common.primary,
+    borderRadius: 8,
+  },
+  clearButtonText: {
     color: 'white',
     fontWeight: '600',
   },

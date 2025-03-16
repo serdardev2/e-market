@@ -21,6 +21,9 @@ const MAPPING = {
   'ellipsis.circle': 'more-vert',
   'ellipsis.circle.fill': 'more-vert',
   trash: 'delete-outline',
+  checkmark: 'check',
+  xmark: 'close',
+  'line.3.horizontal.decrease': 'filter-list',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

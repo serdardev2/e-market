@@ -18,6 +18,7 @@ import { Colors } from '@/src/constants/Colors';
 import { router } from 'expo-router';
 import { MainInput } from '@/src/components/Input/MainInput';
 import { IconSymbol } from '@/src/components/ui/IconSymbol';
+import { FilterModal, FilterOptions } from '@/src/components/Modal/filterModal';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -27,6 +28,10 @@ export default function Home() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<FilterOptions | null>(
+    null,
+  );
   const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
@@ -34,35 +39,61 @@ export default function Home() {
   }, [fetchProducts]);
 
   useEffect(() => {
+    let filtered = [...products];
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      const filtered = products.filter(
+      filtered = filtered.filter(
         (product) =>
           product.name.toLowerCase().includes(query) ||
           product.brand.toLowerCase().includes(query) ||
           product.model.toLowerCase().includes(query) ||
           product.description.toLowerCase().includes(query),
       );
-      setFilteredProducts(filtered);
-      setDisplayedProducts(filtered.slice(0, ITEMS_PER_PAGE));
-      setCurrentPage(1);
-    } else {
-      setFilteredProducts(products);
-      setDisplayedProducts(products.slice(0, currentPage * ITEMS_PER_PAGE));
     }
-  }, [searchQuery, products]);
+
+    if (activeFilters) {
+      if (activeFilters.brands.length > 0) {
+        filtered = filtered.filter((product) =>
+          activeFilters.brands.includes(product.brand),
+        );
+      }
+
+      if (activeFilters.models.length > 0) {
+        filtered = filtered.filter((product) =>
+          activeFilters.models.includes(product.model),
+        );
+      }
+
+      if (activeFilters.priceRange.min !== null) {
+        filtered = filtered.filter(
+          (product) =>
+            parseFloat(product.price) >= activeFilters.priceRange.min!,
+        );
+      }
+
+      if (activeFilters.priceRange.max !== null) {
+        filtered = filtered.filter(
+          (product) =>
+            parseFloat(product.price) <= activeFilters.priceRange.max!,
+        );
+      }
+    }
+
+    setFilteredProducts(filtered);
+    setDisplayedProducts(filtered.slice(0, ITEMS_PER_PAGE));
+    setCurrentPage(1);
+  }, [searchQuery, products, activeFilters]);
 
   useEffect(() => {
-    const productsToDisplay = searchQuery.trim() ? filteredProducts : products;
+    const productsToDisplay = filteredProducts;
     setDisplayedProducts(
       productsToDisplay.slice(0, currentPage * ITEMS_PER_PAGE),
     );
-  }, [currentPage, filteredProducts, products]);
+  }, [currentPage, filteredProducts]);
 
   const loadMoreProducts = () => {
-    const productsToDisplay = searchQuery.trim() ? filteredProducts : products;
-
-    if (displayedProducts.length < productsToDisplay.length && !isLoadingMore) {
+    if (displayedProducts.length < filteredProducts.length && !isLoadingMore) {
       setIsLoadingMore(true);
 
       setTimeout(() => {
@@ -78,6 +109,24 @@ export default function Home() {
 
   const clearSearch = () => {
     setSearchQuery('');
+  };
+
+  const handleApplyFilters = (filters: FilterOptions) => {
+    setActiveFilters(filters);
+  };
+
+  const clearFilters = () => {
+    setActiveFilters(null);
+  };
+
+  const isFiltersActive = () => {
+    if (!activeFilters) return false;
+    return (
+      activeFilters.brands.length > 0 ||
+      activeFilters.models.length > 0 ||
+      activeFilters.priceRange.min !== null ||
+      activeFilters.priceRange.max !== null
+    );
   };
 
   if (isLoading && displayedProducts.length === 0) {
@@ -147,9 +196,7 @@ export default function Home() {
   };
 
   const renderFooter = () => {
-    const productsToDisplay = searchQuery.trim() ? filteredProducts : products;
-
-    if (!isLoadingMore && displayedProducts.length >= productsToDisplay.length)
+    if (!isLoadingMore && displayedProducts.length >= filteredProducts.length)
       return null;
 
     return (
@@ -160,21 +207,37 @@ export default function Home() {
   };
 
   const renderEmptyResult = () => {
-    if (searchQuery.trim() && displayedProducts.length === 0) {
+    if (filteredProducts.length === 0) {
       return (
         <View style={styles.emptySearchContainer}>
           <IconSymbol name="magnifyingglass" size={60} color="#CCCCCC" />
           <Text style={styles.emptySearchText}>
-            {t('home.noSearchResults', { query: searchQuery })}
+            {searchQuery.trim()
+              ? t('home.noSearchResults', { query: searchQuery })
+              : t('home.noFilterResults')}
           </Text>
-          <TouchableOpacity
-            style={styles.clearSearchButton}
-            onPress={clearSearch}
-          >
-            <Text style={styles.clearSearchButtonText}>
-              {t('home.clearSearch')}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.emptyActionButtons}>
+            {searchQuery.trim() && (
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={clearSearch}
+              >
+                <Text style={styles.clearButtonText}>
+                  {t('home.clearSearch')}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {isFiltersActive() && (
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={clearFilters}
+              >
+                <Text style={styles.clearButtonText}>
+                  {t('filter.clearFilters')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       );
     }
@@ -185,31 +248,77 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
         <Text style={styles.subtitle}>{t('home.eMarket')}</Text>
-        <View style={styles.searchContainer}>
-          <MainInput
-            value={searchQuery}
-            onChangeText={handleSearch}
-            placeholder={t('home.searchProducts')}
-            onClear={clearSearch}
-          />
-        </View>
       </View>
+      <View style={styles.inlineContainer}>
+        <View style={styles.searchRow}>
+          <View style={styles.searchContainer}>
+            <MainInput
+              value={searchQuery}
+              onChangeText={handleSearch}
+              placeholder={t('home.searchProducts')}
+              onClear={clearSearch}
+            />
+          </View>
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              isFiltersActive() && styles.filterButtonActive,
+            ]}
+            onPress={() => setFilterModalVisible(true)}
+          >
+            <IconSymbol
+              name="line.3.horizontal.decrease"
+              size={20}
+              color={isFiltersActive() ? '#fff' : '#000'}
+            />
+          </TouchableOpacity>
+        </View>
 
-      {renderEmptyResult() || (
-        <FlatList
-          style={styles.list}
-          showsVerticalScrollIndicator={false}
-          data={displayedProducts}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          onEndReached={loadMoreProducts}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
+        {isFiltersActive() && (
+          <View style={styles.activeFiltersBar}>
+            <Text style={styles.activeFiltersText}>
+              {t('filter.activeFilters')}:
+              {activeFilters?.brands.length
+                ? ` ${activeFilters.brands.length} ${t('filter.brands')}`
+                : ''}
+              {activeFilters?.models.length
+                ? ` ${activeFilters.models.length} ${t('filter.models')}`
+                : ''}
+              {activeFilters?.priceRange.min !== null ||
+              activeFilters?.priceRange.max !== null
+                ? ` ${t('filter.priceRange')}`
+                : ''}
+            </Text>
+            <TouchableOpacity onPress={clearFilters}>
+              <Text style={styles.clearFiltersText}>{t('filter.clear')}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {renderEmptyResult() || (
+          <FlatList
+            style={styles.list}
+            showsVerticalScrollIndicator={false}
+            data={displayedProducts}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            onEndReached={loadMoreProducts}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+          />
+        )}
+
+        <FilterModal
+          visible={filterModalVisible}
+          onClose={() => setFilterModalVisible(false)}
+          onApplyFilters={handleApplyFilters}
+          products={products}
+          activeFilters={activeFilters}
         />
-      )}
+      </View>
     </SafeAreaView>
   );
 }
