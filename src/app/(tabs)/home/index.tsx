@@ -295,21 +295,20 @@ export default function Home() {
           </View>
         )}
 
-        {renderEmptyResult() || (
-          <FlatList
-            style={styles.list}
-            showsVerticalScrollIndicator={false}
-            data={displayedProducts}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.list}
-            numColumns={2}
-            columnWrapperStyle={styles.row}
-            onEndReached={loadMoreProducts}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={renderFooter}
-          />
-        )}
+        <FlatList
+          style={styles.list}
+          showsVerticalScrollIndicator={false}
+          data={displayedProducts}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          onEndReached={loadMoreProducts}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          ListEmptyComponent={renderEmptyResult}
+        />
 
         <FilterModal
           visible={filterModalVisible}
