@@ -9,7 +9,8 @@
     "welcome": "Welcome",
     "featured_products": "Featured Products",
     "categories": "Categories",
-    "search_placeholder": "Search products..."
+    "search_placeholder": "Search products...",
+    "e_market": "E-Market"
   },
   "basket": {
     "empty": "Your cart is empty",
