@@ -17,7 +17,8 @@
     "removeFromFavorites": "Remove from Favorites",
     "alreadyAddedToFavorites": "Already added to favorites",
     "inCart": "In Cart",
-    "alreadyAddedToCart": "Already added to cart"
+    "alreadyAddedToCart": "Already added to cart",
+    "removeFromCart": "Remove"
   },
   "cart": {
     "addedToCart": "Product added to cart",
@@ -50,6 +51,20 @@
     "errorAddingToFavorites": "An error occurred while adding to favorites",
     "errorRemovingFromFavorites": "An error occurred while removing from favorites",
     "errorLoadingFavorites": "An error occurred while loading favorites"
+  },
+  "productDetail": {
+    "details": "Details",
+    "price": "Price",
+    "description": "Description",
+    "addToCart": "Add to Cart",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites",
+    "alreadyAddedToCart": "Already added to cart",
+    "title": "Product Detail",
+    "brand": "Brand",
+    "model": "Model",
+    "createdAt": "Created At",
+    "specification": "Specifications"
   },
   "profile": {
     "orders": "My Orders",

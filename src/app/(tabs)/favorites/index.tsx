@@ -19,7 +19,7 @@ import { Colors } from '@/src/constants/Colors';
 export default function Favorites() {
   const { favorites, error, loadFavoritesFromStorage, removeFromFavorites } =
     useFavoritesStore();
-  const { addToCart, cartItems } = useCartStore();
+  const { addToCart, removeFromCart, cartItems } = useCartStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -48,17 +48,20 @@ export default function Favorites() {
     return false;
   };
 
-  const handleAddToCart = async (product: Product) => {
+  const handleCartAction = async (product: Product) => {
     try {
-      if (!isInCart(product.id)) {
-        const result = await addToCart(product);
-
-        if (result && !result.success) {
-          Alert.alert('Bilgi', result.message);
-        }
+      if (isInCart(product.id)) {
+        await removeFromCart(product.id);
+      } else {
+        await addToCart(product);
       }
     } catch (error) {
-      Alert.alert('Hata', 'Ürün sepete eklenirken bir sorun oluştu');
+      Alert.alert(
+        t('common.error'),
+        isInCart(product.id)
+          ? t('cart.errorRemovingFromCart')
+          : t('cart.errorAddingToCart'),
+      );
     }
   };
 
@@ -81,11 +84,13 @@ export default function Favorites() {
 
       <View style={styles.actionButtons}>
         <TouchableOpacity
-          style={[styles.cartButton, isInCart(item.id) && styles.inCartButton]}
-          onPress={() => handleAddToCart(item)}
-          disabled={isInCart(item.id)}
+          style={[
+            styles.cartButton,
+            isInCart(item.id) ? styles.removeCartButton : styles.addCartButton,
+          ]}
+          onPress={() => handleCartAction(item)}
         >
-          <IconSymbol size={20} name="cart.fill" color="white" />
+          <IconSymbol size={20} name={'cart.fill'} color="white" />
           <Text style={styles.cartButtonText}>
             {isInCart(item.id)
               ? t('favorites.inCart')

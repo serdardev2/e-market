@@ -1,4 +1,11 @@
-import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useProductStore } from '../../../store/useProductStore';
 import { useEffect, useState } from 'react';
@@ -9,6 +16,7 @@ import { AddToCartButton } from '@/src/components/Button/AddToCardButton';
 import { useFavoritesStore } from '../../../store/useFavoritesStore';
 import { FavoriteButton } from '@/src/components/Button/FavoritesButton';
 import { Colors } from '@/src/constants/Colors';
+import { router } from 'expo-router';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -58,7 +66,10 @@ export default function Home() {
   }
 
   const renderItem = ({ item }: { item: Product }) => (
-    <View style={styles.productCard}>
+    <TouchableOpacity
+      onPress={() => navigateProductDetail(item)}
+      style={styles.productCard}
+    >
       <FavoriteButton product={item} />
       <Image
         resizeMode="contain"
@@ -85,8 +96,24 @@ export default function Home() {
         </Text>
         <AddToCartButton product={item} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
+
+  const navigateProductDetail = (product: Product) => {
+    router.push({
+      pathname: '/(tabs)/home/productDetail',
+      params: {
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        description: product.description,
+        model: product.model,
+        brand: product.brand,
+        createdAt: product.createdAt,
+      },
+    });
+  };
 
   const renderFooter = () => {
     if (!isLoadingMore && displayedProducts.length >= products.length)

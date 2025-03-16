@@ -17,7 +17,8 @@
     "removeFromFavorites": "Favorilerden Çıkar",
     "alreadyAddedToFavorites": "Zaten favorilere eklendi",
     "inCart": "Sepette",
-    "alreadyAddedToCart": "Zaten sepete eklendi"
+    "alreadyAddedToCart": "Zaten sepete eklendi",
+    "removeFromCart": "Çıkar"
   },
   "cart": {
     "addedToCart": "Ürün sepete eklendi",
@@ -50,6 +51,22 @@
     "errorAddingToFavorites": "Favorilere eklenirken bir hata oluştu",
     "errorRemovingFromFavorites": "Favorilerden çıkarılırken bir hata oluştu",
     "errorLoadingFavorites": "Favoriler yüklenirken bir hata oluştu"
+  },
+  "productDetail": {
+    "details": "Detaylar",
+    "price": "Fiyat",
+    "description": "Açıklama",
+    "addToCart": "Sepete Ekle",
+    "addToFavorites": "Favorilere Ekle",
+    "removeFromFavorites": "Favorilerden Çıkar",
+    "alreadyAddedToFavorites": "Zaten favorilere eklendi",
+    "inCart": "Sepette",
+    "alreadyAddedToCart": "Zaten sepete eklendi",
+    "title": "Ürün Detayı",
+    "brand": "Marka",
+    "model": "Model",
+    "createdAt": "Oluşturulma Tarihi",
+    "specification": "Özellikler"
   },
   "profile": {
     "orders": "Siparişlerim",

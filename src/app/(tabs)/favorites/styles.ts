@@ -86,6 +86,12 @@ export default StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
+  addCartButton: {
+    backgroundColor: Colors.common.primary,
+  },
+  removeCartButton: {
+    backgroundColor: Colors.common.green,
+  },
   inCartButton: {
     backgroundColor: Colors.common.green,
   },
