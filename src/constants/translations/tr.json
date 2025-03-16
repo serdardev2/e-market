@@ -7,20 +7,31 @@
   },
   "home": {
     "welcome": "Hoş Geldiniz",
-    "featured_products": "Öne Çıkan Ürünler",
-    "e_market": "E-Market",
+    "eMarket": "E-Market",
     "categories": "Kategoriler",
-    "search_placeholder": "Ürün ara..."
+    "searchPlaceholder": "Ürün ara...",
+    "addToCart": "Sepete Ekle",
+    "addToFavorites": "Favorilere Ekle",
+    "removeFromFavorites": "Favorilerden Çıkar",
+    "alreadyAddedToFavorites": "Zaten favorilere eklendi",
+    "inCart": "Sepette",
+    "alreadyAddedToCart": "Zaten sepete eklendi"
   },
   "basket": {
     "empty": "Sepetiniz boş",
     "total": "Toplam",
-    "checkout": "Ödemeye Geç",
-    "remove": "Kaldır"
+    "remove": "Kaldır",
+    "title": "Sepetim",
+    "emptyCartMessage": "Sepetiniz boş"
   },
   "favorites": {
     "empty": "Favori ürününüz yok",
-    "add_to_basket": "Sepete Ekle"
+    "title": "Favorilerim",
+    "remove": "Favorilerden Çıkar",
+    "inCart": "Sepette",
+    "addToCart": "Sepete Ekle",
+    "emptyFavoritesMessage": "Favori ürününüz yok",
+    "emptyFavoritesDescription": "Favori ürünlerinizi buradan görebilir ve sepetinize ekleyebilirsiniz."
   },
   "profile": {
     "orders": "Siparişlerim",

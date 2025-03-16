@@ -19,7 +19,7 @@ export const useProductStore = create<ProductState>((set) => ({
       const products = await ProductService.getProducts();
       set({ products, isLoading: false });
     } catch (error) {
-      set({ error: 'Ürünler yüklenirken bir hata oluştu', isLoading: false });
+      set({ isLoading: false });
     }
   },
 }));

@@ -3,12 +3,18 @@ import { IconSymbol } from '@/src/components/ui/IconSymbol';
 import TabBarBackground from '@/src/components/ui/TabBarBackground';
 import { Colors } from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
+import { useCartStore } from '@/src/store/useCardStore';
 import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { Platform, View, Text, StyleSheet } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { cartItems, loadCartFromStorage } = useCartStore();
+
+  useEffect(() => {
+    loadCartFromStorage();
+  }, []);
 
   return (
     <Tabs
@@ -41,7 +47,14 @@ export default function TabLayout() {
         options={{
           title: 'Basket',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={32} name="cart.fill" color={color} />
+            <View>
+              <IconSymbol size={32} name="cart.fill" color={color} />
+              {cartItems.length > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{cartItems.length}</Text>
+                </View>
+              )}
+            </View>
           ),
         }}
       />
@@ -66,3 +79,23 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  badge: {
+    position: 'absolute',
+    right: -6,
+    top: -4,
+    backgroundColor: 'red',
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    paddingHorizontal: 4,
+  },
+});

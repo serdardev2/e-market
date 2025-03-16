@@ -7,20 +7,31 @@
   },
   "home": {
     "welcome": "Welcome",
-    "featured_products": "Featured Products",
     "categories": "Categories",
     "search_placeholder": "Search products...",
-    "e_market": "E-Market"
+    "eMarket": "E-Market",
+    "addToCart": "Add to Cart",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites",
+    "alreadyAddedToFavorites": "Already added to favorites",
+    "inCart": "In Cart",
+    "alreadyAddedToCart": "Already added to cart"
   },
   "basket": {
     "empty": "Your cart is empty",
     "total": "Total",
-    "checkout": "Checkout",
-    "remove": "Remove"
+    "remove": "Remove",
+    "title": "My Cart",
+    "emptyCartMessage": "Your cart is empty"
   },
   "favorites": {
     "empty": "No favorite products",
-    "add_to_basket": "Add to Cart"
+    "addToCart": "Add to Cart",
+    "inCart": "In Cart",
+    "title": "My Favorites",
+    "remove": "Remove from Favorites",
+    "emptyFavoritesMessage": "No favorite products",
+    "emptyFavoritesDescription": "You can view and add your favorite products here."
   },
   "profile": {
     "orders": "My Orders",
