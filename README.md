@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+# E-Market
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 🚀 Getting Started
 
-## Get started
+Follow the steps below to run the project on your local machine.
 
-1. Install dependencies
+### 1. Install Dependencies
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Navigate to the project directory and install dependencies:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Start the Project
 
-## Learn more
+```bash
+npm start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Once the command is executed, a QR code will appear in the terminal.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Scan the QR code with the Expo Go app to launch the project.
 
-## Join the community
+## 📱 Application Flow
 
-Join our community of developers creating universal apps.
+### 1. Product List Screen
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- The user is automatically redirected to this page when they first open the application. This page shows the Product List to the user.
+
+### 2. Product List Detail Screen
+
+- Clicking on any product opens the detail page of that product. This page shows all the details of the product to the user.
+
+### 3. Cart Screen
+
+- This page shows the products added by the user.
+- When the add to cart button is clicked from the list screen or list detail screen, the added product is shown to the user on the List screen.
+
+### 4. Favorites Screen
+
+- It works in the same logic as Add Cart. The user can show their favorites on this page by clicking on the favorite icon on the Product Card.
+
+## 5. Profile Screen
+- The user can change the language of the application from this page.
+
+## 📚 Additional Information
+
+- **Expo Usage:** The app is built using Expo and can be tested with the Expo Go app or an emulator.
+- **Development Tools:** Developed with React Native, Expo, Node.js, and relevant dependencies.
+
+## ⚠️ Important Note
+
+You need to add the .env file manually. An example file has been included in the project.
